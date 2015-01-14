@@ -12,6 +12,18 @@ def show_system_info():
 	print("System version: ", uname.version)
 	print("Instruction set:", uname.machine)
 
+
+def get_dict_system_info():
+	uname = platform.uname()
+	return {
+		'family':   uname.system,
+		'hostname': uname.node,
+		'release':  uname.release,
+		'version':  uname.version,
+		'i_set':    uname.machine
+	}
+
+
 def show_cpu_usage(given_interval, separate=False):
 	usage = psutil.cpu_percent(interval=given_interval, percpu=separate)
 
@@ -21,10 +33,27 @@ def show_cpu_usage(given_interval, separate=False):
 	else:
 		print("Total cpu usage:", usage)
 
+
+def get_dict_cpu_usage(given_interval, separate=False):
+	usage = psutil.cpu_percent(interval=given_interval, percpu=separate)
+	usage_list = []
+	if separate:
+		for i in range(len(usage)):
+			usage_list.append(usage[i])
+	else:
+		usage_list.append(usage)
+	return usage_list
+
+
 def show_cpu_count():
 	count_hard = psutil.cpu_count(logical=False)
 	count_logi = psutil.cpu_count(logical=True)
 	print("CPU found (logical/physical):", count_logi, "/", count_hard)
+
+
+def get_dict_cpu_count():
+	return { 'physical': psutil.cpu_count(logical=False), 'logical': psutil.cpu_count(logical=True) }
+
 
 def show_mem_usage():
 	mem = psutil.virtual_memory()
@@ -32,11 +61,31 @@ def show_mem_usage():
 	print("Mem free:\t", round((mem.available/1024)/1024, 2), "MB")
 	print("Mem used:\t", mem.percent,"%")
 
+
+def get_dict_mem_usage():
+	mem = psutil.virtual_memory()
+	return {
+		'total': mem.total,
+	    'free': mem.available,
+	    'used_percent': mem.percent
+	}
+
+
 def show_smem_usage():
 	smem = psutil.swap_memory()
 	print("Swap total:\t", round((smem.total/1024)/1024,2), "MB")
 	print("Swap free:\t", round((smem.free/1024)/1024, 2), "MB")
 	print("Swap used:\t", smem.percent,"%")
+
+
+def get_dict_smem_usage():
+	smem = psutil.swap_memory()
+	return {
+		'total': smem.total,
+	    'free': smem.free,
+	    'used': smem.percent
+	}
+
 
 def show_disks():
 	disks = psutil.disk_partitions(all=True)
@@ -45,6 +94,21 @@ def show_disks():
 		print("\tmount:", disk.mountpoint)
 		print("\tfstype:", disk.fstype)
 		print("\toptions:", disk.opts)
+
+
+def get_dict_disks():
+	disks = psutil.disk_partitions(all=True)
+	result = []
+	for disk in disks:
+		ele = {
+			'device': disk.device,
+		    'mount': disk.mountpoint,
+		    'fstype': disk.fstype,
+		    'options': disk.fstype
+		}
+		result.append(ele)
+	return result
+
 
 def show_io_counters(separate=False):
 	disks = psutil.disk_io_counters(perdisk=separate)
@@ -57,6 +121,25 @@ def show_io_counters(separate=False):
 		print(" Write count:\t", data.write_count)
 		print(" \t bytes:\t\t", data.write_bytes)
 		print(" \t time:\t\t", data.write_time)
+
+
+def get_dict_io_counters(separate=False):
+	disks = psutil.disk_io_counters(perdisk=separate)
+	result = []
+	for disk in disks.keys():
+		data = disks[disk]
+		ele = {
+			'disk': disk,
+		    'r_count': data.read_count,
+		    'r_bytes': data.read_bytes,
+		    'r_time': data.read_time,
+		    'w_count': data.write_count,
+		    'w_bytes': data.write_bytes,
+		    'w_time': data.write_time,
+		}
+		result.append(ele)
+	return result
+
 
 def show_net_counters(separate=False):
 	cons = psutil.net_io_counters(pernic=True)
@@ -159,8 +242,7 @@ def show_processes(running_as_root=False):
 			print("\tMemory maps:", pinfo['memory_maps'])
 			print("\tConnections:")
 			show_net_connection_from_array(pinfo['connections'])
-			# for con in pinfo['connections']:
-			# 	print("\t\t",con)
+
 
 def main():
 	show_system_info()
@@ -187,8 +269,13 @@ def main():
 	# print()
 	# show_processes()
 
-
-
+	print(get_dict_system_info())
+	print(get_dict_cpu_usage(0.5,True))
+	print(get_dict_cpu_count())
+	print(get_dict_mem_usage())
+	print(get_dict_smem_usage())
+	print(get_dict_disks())
+	print(get_dict_io_counters(True))
 	# pass
 
 if __name__ == "__main__":
