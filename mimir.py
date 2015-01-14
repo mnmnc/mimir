@@ -67,8 +67,74 @@ def show_net_counters(separate=False):
 		print("Packets recv:", data.packets_recv)
 		print("Err in/out/dropin/dropout:", data.errin, data.errout, data.dropin, data.dropout)
 
-def main():
+def show_net_connections(mykind='all'):
+	""" Acceptable values are: inet, inet4, inet6, tcp, tcp4, tcp6, udp, udp4, udp6, unix, all """
+	cons = psutil.net_connections(kind=mykind)
+	for con in cons:
+		print("Local address:", con.laddr)
+		print("\tRemote address:", con.raddr)
+		print("\tFamily (INET/INET6/UNIX):", con.family)
+		print("\tType (STREAM/DATAGRAM):", con.type)
+		print("\tStatus:", con.status)
+		print("\tPid:", con.pid)
 
+def show_net_connection_from_array(arr):
+	cons = arr
+	for con in cons:
+		print("\t\tLocal address:", con.laddr)
+		print("\t\tRemote address:", con.raddr)
+		print("\t\tFamily (INET/INET6/UNIX):", con.family)
+		print("\t\tType (STREAM/DATAGRAM):", con.type)
+		print("\t\tStatus:", con.status)
+
+def show_current_users():
+	users = psutil.users()
+	for user in users:
+		print("User name:", user.name)
+		print("User terminal:", user.terminal)
+		print("Logged from host:", user.host)
+		print("Logged on since:", user.started)
+
+def show_boot():
+	boot = psutil.boot_time()
+	print("Last boot:", boot)
+
+def show_processes(running_as_root=False):
+	for proc in psutil.process_iter():
+		try:
+			pinfo = proc.as_dict()
+		except psutil.NoSuchProcess:
+			pass
+		else:
+			print("Process name:", pinfo['name'])
+			print("\tCreation time:", pinfo['create_time'])
+			print("\tOpen files:", pinfo['open_files'])
+			print("\tIO counter:", pinfo['io_counters'])
+			print("\tCPU times:", pinfo['cpu_times'])
+			print("\tThreads num:", pinfo['num_threads'])
+			print("\tMemory usage:", pinfo['memory_percent'], "%")
+			print("\tContext switches:", pinfo['num_ctx_switches'])
+			print("\tWorking directory:", pinfo['cwd'])
+			print("\tParent pid:", pinfo['ppid'])
+			print("\tThreads:", pinfo['threads'])
+			print("\tStatus:", pinfo['status'])
+			print("\tExecutable:", pinfo['exe'])
+			print("\tPriority:", pinfo['nice'])
+			print("\tHandles:", pinfo['num_handles'])
+			print("\tUsername:", pinfo['username'])
+			print("\tCpu_affinity", pinfo['cpu_affinity'])
+			print("\tPID:", pinfo['pid'])
+			print("\tCPU usage:", pinfo['cpu_percent'], "%")
+			print("\tIO priority:", pinfo['ionice'])
+			print("\tMem info", pinfo['memory_info_ex'])
+			print("\tCommand:", pinfo['cmdline'])
+			print("\tMemory maps:", pinfo['memory_maps'])
+			print("\tConnections:")
+			show_net_connection_from_array(pinfo['connections'])
+			# for con in pinfo['connections']:
+			# 	print("\t\t",con)
+
+def main():
 	show_system_info()
 	print()
 	show_cpu_usage(0.5)
@@ -85,20 +151,16 @@ def main():
 	print()
 	show_net_counters(True)
 	print()
+	show_net_connections()
+	print()
+	show_current_users()
+	print()
+	show_boot()
+	print()
+	show_processes()
 
-	for con in psutil.net_connections(kind='inet'):
-		print(con)
-	#
-	# print(psutil.users())
-	# print(psutil.boot_time())
-	# for proc in psutil.process_iter():
-	# 	try:
-	# 		pinfo = proc.as_dict(attrs=['pid', 'name'])
-	# 		#pinfo = proc.as_dict()
-	# 	except psutil.NoSuchProcess:
-	# 		pass
-	# 	else:
-	# 		print(pinfo)
+
+
 	# pass
 
 if __name__ == "__main__":
