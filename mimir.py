@@ -1,6 +1,7 @@
 import psutil
 import os
 import platform
+import socket
 
 def show_system_info():
 	uname = platform.uname()
@@ -73,8 +74,16 @@ def show_net_connections(mykind='all'):
 	for con in cons:
 		print("Local address:", con.laddr)
 		print("\tRemote address:", con.raddr)
-		print("\tFamily (INET/INET6/UNIX):", con.family)
-		print("\tType (STREAM/DATAGRAM):", con.type)
+		if con.family == socket.AF_INET:
+			print("\tFamily: AF_INET")
+		elif con.family == socket.AF_INET6:
+			print("\tFamily: AF_INET6")
+		else:
+			print("\tFamily: UNKNWN")
+		if con.type == socket.SOCK_STREAM:
+			print("\tType: SOCK_STREAM")
+		elif con.type == socket.SOCK_DGRAM:
+			print("\tType: SOCK_DGRAM")
 		print("\tStatus:", con.status)
 		print("\tPid:", con.pid)
 
@@ -83,8 +92,17 @@ def show_net_connection_from_array(arr):
 	for con in cons:
 		print("\t\tLocal address:", con.laddr)
 		print("\t\tRemote address:", con.raddr)
-		print("\t\tFamily (INET/INET6/UNIX):", con.family)
-		print("\t\tType (STREAM/DATAGRAM):", con.type)
+		if con.family == socket.AF_INET:
+			print("\t\tFamily: AF_INET")
+		elif con.family == socket.AF_INET6:
+			print("\t\tFamily: AF_INET6")
+		else:
+			print("\t\tFamily: UNKNWN")
+
+		if con.type == socket.SOCK_STREAM:
+			print("\t\tType: SOCK_STREAM")
+		elif con.type == socket.SOCK_DGRAM:
+			print("\t\tType: SOCK_DGRAM")
 		print("\t\tStatus:", con.status)
 
 def show_current_users():
@@ -149,19 +167,19 @@ def main():
 	print()
 	show_smem_usage()
 	print()
-	show_disks()
-	print()
-	show_io_counters(True)
-	print()
-	show_net_counters(True)
-	print()
-	show_net_connections()
-	print()
-	show_current_users()
-	print()
-	show_boot()
-	print()
-	show_processes()
+	# show_disks()
+	# print()
+	# show_io_counters(True)
+	# print()
+	# show_net_counters(True)
+	# print()
+	# show_net_connections()
+	# print()
+	# show_current_users()
+	# print()
+	# show_boot()
+	# print()
+	# show_processes()
 
 
 
