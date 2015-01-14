@@ -120,7 +120,11 @@ def show_processes(running_as_root=False):
 			print("\tStatus:", pinfo['status'])
 			print("\tExecutable:", pinfo['exe'])
 			print("\tPriority:", pinfo['nice'])
-			print("\tHandles:", pinfo['num_handles'])
+			# TODO: FIX SO THAT THIS WILL BE CHECKED ONLY ON WINDOWS
+			try:
+				print("\tHandles:", pinfo['num_handles'])
+			except:
+				pass
 			print("\tUsername:", pinfo['username'])
 			print("\tCpu_affinity", pinfo['cpu_affinity'])
 			print("\tPID:", pinfo['pid'])
