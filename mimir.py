@@ -2,6 +2,7 @@ import psutil
 import os
 import platform
 import socket
+import datetime
 
 def show_system_info():
 	uname = platform.uname()
@@ -111,11 +112,16 @@ def show_current_users():
 		print("User name:", user.name)
 		print("User terminal:", user.terminal)
 		print("Logged from host:", user.host)
-		print("Logged on since:", user.started)
+		print("Logged on since:", get_date_string(user.started))
 
 def show_boot():
 	boot = psutil.boot_time()
-	print("Last boot:", boot)
+	print("Last boot:", get_date_string(boot))
+
+def get_date_string(date):
+	return datetime.datetime.utcfromtimestamp(
+        int(date)
+    ).strftime('%Y-%m-%d %H:%M:%S')
 
 def show_processes(running_as_root=False):
 	for proc in psutil.process_iter():
@@ -125,7 +131,7 @@ def show_processes(running_as_root=False):
 			pass
 		else:
 			print("Process name:", pinfo['name'])
-			print("\tCreation time:", pinfo['create_time'])
+			print("\tCreation time:", get_date_string(pinfo['create_time']))
 			print("\tOpen files:", pinfo['open_files'])
 			print("\tIO counter:", pinfo['io_counters'])
 			print("\tCPU times:", pinfo['cpu_times'])
@@ -175,9 +181,9 @@ def main():
 	# print()
 	# show_net_connections()
 	# print()
-	# show_current_users()
+	show_current_users()
 	# print()
-	# show_boot()
+	show_boot()
 	# print()
 	# show_processes()
 
