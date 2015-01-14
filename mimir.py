@@ -44,6 +44,29 @@ def show_disks():
 		print("\tfstype:", disk.fstype)
 		print("\toptions:", disk.opts)
 
+def show_io_counters(separate=False):
+	disks = psutil.disk_io_counters(perdisk=separate)
+	for disk in disks.keys():
+		data = disks[disk]
+		print("Drive:", disk)
+		print(" Read count:\t", data.read_count)
+		print(" \t bytes:\t\t", data.read_bytes)
+		print(" \t time:\t\t", data.read_time)
+		print(" Write count:\t", data.write_count)
+		print(" \t bytes:\t\t", data.write_bytes)
+		print(" \t time:\t\t", data.write_time)
+
+def show_net_counters(separate=False):
+	cons = psutil.net_io_counters(pernic=True)
+	for con in cons.keys():
+		data = cons[con]
+		print("Connection:", con)
+		print("Bytes sent:", data.bytes_sent)
+		print("Bytes recv:", data.bytes_recv)
+		print("Packets sent:", data.packets_sent)
+		print("Packets recv:", data.packets_recv)
+		print("Err in/out/dropin/dropout:", data.errin, data.errout, data.dropin, data.dropout)
+
 def main():
 
 	show_system_info()
@@ -58,15 +81,13 @@ def main():
 	print()
 	show_disks()
 	print()
+	show_io_counters(True)
+	print()
+	show_net_counters(True)
+	print()
 
-
-
-
-
-	# print(psutil.disk_io_counters(perdisk=True))
-	# print(psutil.net_io_counters(pernic=True))
-	# for con in psutil.net_connections(kind='inet'):
-	# 	print(con)
+	for con in psutil.net_connections(kind='inet'):
+		print(con)
 	#
 	# print(psutil.users())
 	# print(psutil.boot_time())
