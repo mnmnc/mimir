@@ -1,12 +1,10 @@
 import psutil
-import os
 import platform
 import socket
 import datetime
 import json
 
 def main():
-
 	data = {
 		'system_info': get_dict_system_info(),
 		'cpu_usage': get_dict_cpu_usage(0.1,True),
@@ -21,7 +19,8 @@ def main():
 		'boot_time': get_dict_boot_time(),
 		'processes': get_dict_processes()
 	}
-	print(json.dumps(data, sort_keys=True, indent=4))
+	#print(json.dumps(data, sort_keys=True, indent=4))
+	print(json.dumps(data))
 
 
 def show_all():
